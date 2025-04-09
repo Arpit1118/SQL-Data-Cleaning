@@ -54,3 +54,97 @@ WHERE t.transaction_id IS NULL
 GROUP BY v.customer_id; 
 
 
+SELECT
+    S.student_id
+    ,S.student_name
+    ,SU.subject_name
+    ,COUNT(E.student_id) attended_exams
+FROM Students S
+CROSS JOIN Subjects SU
+LEFT JOIN Examinations E
+    ON S.student_id = E.student_id
+    AND SU.subject_name = E.subject_name
+
+GROUP BY S.student_id, S.student_name, SU.subject_name
+ORDER BY S.student_id, S.student_name, SU.subject_name
+;
+
+
+SELECT E1.name
+FROM Employee E1
+JOIN (
+    SELECT managerId, COUNT(*) AS directReports
+    FROM Employee
+    GROUP BY managerId
+    HAVING COUNT(*) >= 5
+) E2 ON E1.id = E2.managerId;
+
+
+SELECT
+    S.student_id
+    ,S.student_name
+    ,SU.subject_name
+    ,COUNT(E.student_id) attended_exams
+FROM Students S
+CROSS JOIN Subjects SU
+LEFT JOIN Examinations E
+    ON S.student_id = E.student_id
+    AND SU.subject_name = E.subject_name
+
+GROUP BY S.student_id, S.student_name, SU.subject_name
+ORDER BY S.student_id, S.student_name, SU.subject_name
+;
+
+
+SELECT
+    s.user_id,
+    ROUND(
+        AVG(
+            IF(c.action = 'confirmed', 1.00, 0)
+        ), 
+        2
+    ) confirmation_rate
+FROM
+    Signups s
+LEFT JOIN
+    Confirmations c
+    ON
+    s.user_id = c.user_id
+GROUP BY
+    s.user_id
+	
+	
+SELECT id, movie, description, rating
+FROM Cinema
+WHERE id % 2 = 1 AND description != 'boring'
+ORDER BY rating DESC;
+
+
+SELECT p.product_id, IFNULL(ROUND(SUM(units*price)/SUM(units),2),0) AS average_price
+FROM Prices p LEFT JOIN UnitsSold u
+ON p.product_id = u.product_id AND
+u.purchase_date BETWEEN start_date AND end_date
+group by product_id
+
+
+SELECT p.project_id, ROUND(AVG(e.experience_years),2) AS average_years
+FROM Project p 
+LEFT JOIN Employee e
+ON p.employee_id = e.employee_id
+GROUP BY p.project_id
+
+
+select 
+contest_id, 
+round(count(distinct user_id) * 100 /(select count(user_id) from Users) ,2) as percentage
+from  Register
+group by contest_id
+order by percentage desc,contest_id
+
+
+SELECT 
+    query_name,
+    ROUND(AVG(CAST(rating AS DECIMAL) / position), 2) AS quality,
+    ROUND(SUM(CASE WHEN rating < 3 THEN 1 ELSE 0 END) * 100 / COUNT(*), 2) AS poor_query_percentage
+FROM Queries
+GROUP BY query_name;

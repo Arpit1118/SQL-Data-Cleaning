@@ -148,3 +148,88 @@ SELECT
     ROUND(SUM(CASE WHEN rating < 3 THEN 1 ELSE 0 END) * 100 / COUNT(*), 2) AS poor_query_percentage
 FROM Queries
 GROUP BY query_name;
+
+
+SELECT 
+    LEFT(trans_date, 7) AS month,
+    country, 
+    COUNT(id) AS trans_count,
+    SUM(state = 'approved') AS approved_count,
+    SUM(amount) AS trans_total_amount,
+    SUM((state = 'approved') * amount) AS approved_total_amount
+FROM 
+    Transactions
+GROUP BY 
+    month, country;
+
+
+
+Select round(avg(order_date = customer_pref_delivery_date)*100, 2) as immediate_percentage
+from Delivery
+where (customer_id, order_date) in (
+  Select customer_id, min(order_date) 
+  from Delivery
+  group by customer_id
+);
+
+
+
+SELECT
+  ROUND(COUNT(DISTINCT player_id) / (SELECT COUNT(DISTINCT player_id) FROM Activity), 2) AS fraction
+FROM
+  Activity
+WHERE
+  (player_id, DATE_SUB(event_date, INTERVAL 1 DAY))
+  IN (
+    SELECT player_id, MIN(event_date) AS first_login FROM Activity GROUP BY player_id
+  )
+
+
+
+select teacher_id, count(distinct(subject_id)) as cnt
+from Teacher
+group by teacher_id
+
+
+
+SELECT activity_date AS day, COUNT(DISTINCT user_id) AS active_users
+FROM Activity
+WHERE activity_date BETWEEN '2019-06-28' AND '2019-07-27'
+GROUP BY activity_date;
+
+
+
+select product_id, year as first_year, quantity, price 
+from sales where (product_id, year) in (
+    select product_id, min(year)
+    from sales
+    group by product_id
+)
+
+
+
+SELECT class
+FROM Courses
+GROUP BY class
+HAVING COUNT(student) >= 5;
+
+
+
+SELECT  user_id , count(follower_id) as followers_count
+from Followers
+group by user_id 
+order by user_id asc;
+
+
+SELECT MAX(num) AS num
+FROM (
+    SELECT num
+    FROM MyNumbers
+    GROUP BY num
+    HAVING COUNT(num) = 1
+) AS unique_numbers;
+
+
+
+SELECT  customer_id FROM Customer GROUP BY customer_id
+HAVING COUNT(distinct product_key) = (SELECT COUNT(product_key) FROM Product)

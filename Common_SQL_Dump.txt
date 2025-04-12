@@ -233,3 +233,93 @@ FROM (
 
 SELECT  customer_id FROM Customer GROUP BY customer_id
 HAVING COUNT(distinct product_key) = (SELECT COUNT(product_key) FROM Product)
+
+
+select mgr.employee_id, mgr.name, COUNT(emp.employee_id) as reports_count, ROUND(AVG(emp.age)) as average_age
+from employees emp join employees mgr
+on emp.reports_to = mgr.employee_id
+group by employee_id
+order by employee_id
+
+
+
+SELECT employee_id, department_id
+FROM Employee
+WHERE primary_flag='Y' OR 
+    employee_id in
+    (SELECT employee_id
+    FROM Employee
+    Group by employee_id
+    having count(employee_id)=1)
+
+
+SELECT *, IF(x+y>z and y+z>x and z+x>y, "Yes", "No") as triangle FROM Triangle
+
+
+
+with cte as (
+    select num,
+    lead(num,1) over() num1,
+    lead(num,2) over() num2
+    from logs
+
+)
+
+select distinct num ConsecutiveNums from cte where (num=num1) and (num=num2)
+
+
+
+
+select 
+    distinct product_id,
+    10 as price
+from 
+    products
+group by
+    product_id
+having
+    min(change_date) > "2019-08-16"
+
+union
+
+select 
+    product_id, 
+    new_price
+from 
+    Products 
+where 
+    (product_id, change_date) in(
+                                select 
+                                    product_id, 
+                                    max(change_date) as recent_date
+                                from 
+                                    Products
+                                where 
+                                    change_date <= "2019-08-16"
+                                group by 
+                                    product_id
+                                )
+
+
+SELECT person_name from (SELECT person_name,turn,
+sum(weight) over (order by turn) AS cum FROM queue) p1
+where cum<=1000 order by turn DESC limit 1;
+
+
+
+SELECT "Low Salary" AS category,
+       sum(income < 20000) AS accounts_count
+  FROM Accounts
+
+UNION
+
+SELECT "Average Salary" AS category,
+       sum(income BETWEEN 20000 AND 50000) AS accounts_count
+  FROM Accounts
+
+UNION
+
+SELECT "High Salary" AS category,
+       sum(income > 50000) AS accounts_count
+  FROM Accounts;
+

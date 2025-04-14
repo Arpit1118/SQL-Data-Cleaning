@@ -434,3 +434,47 @@ ORDER BY
     Department, Salary DESC;
 
 
+
+SELECT Users.user_id , CONCAT(UPPER(SUBSTR(Users.name,1,1)),LOWER(SUBSTR(Users.name,2))) AS name 
+FROM Users
+ORDER BY
+Users.user_id ASC
+
+
+
+select patient_id,patient_name,conditions from Patients
+where conditions like 'DIAB1%'  or  conditions like '% DIAB1%' ;
+
+
+
+DELETE p FROM Person p
+JOIN Person p2 
+ON p.Email = p2.Email AND p.Id > p2.Id;
+
+
+select
+(select distinct Salary 
+from Employee order by salary desc 
+limit 1 offset 1) 
+as SecondHighestSalary;
+
+
+
+select sell_date, count( DISTINCT product ) as num_sold ,
+    
+    GROUP_CONCAT( DISTINCT product order by product ASC separator ',' ) as products
+    
+        FROM Activities GROUP BY sell_date order by sell_date ASC;
+
+
+SELECT p.product_name AS product_name, sum(o.unit) AS unit FROM Products p
+JOIN Orders o USING (product_id)
+WHERE YEAR(o.order_date)='2020' AND MONTH(o.order_date)='02'
+GROUP BY p.product_id
+HAVING SUM(o.unit)>=100
+
+
+SELECT *
+FROM Users
+WHERE mail REGEXP '^[a-zA-Z][a-zA-Z0-9_.-]*@leetcode[.]com';
+
